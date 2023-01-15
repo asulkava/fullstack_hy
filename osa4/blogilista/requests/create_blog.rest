@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik1hdHRpVXNlcjEiLCJpZCI6IjYzNmE0NDRkNzNkNzI1Y2VhYWMyM2ZmOSIsImlhdCI6MTY2NzkyMDU5OH0.T-tfMN_cf-tTSehRvfA0IKuBeF59HcXFUb1mzIgL2EI
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjQyMlRlc3QiLCJpZCI6IjYzYzJkZTRmM2JkMTc0NzcwZmYzMTk0OCIsImlhdCI6MTY3MzcxNTI4Nn0.Zh_13XLqXHTRzsubfLjmen3mesgec0gL0yjlxwcjjHw
 
 {
-  "title": "Testi token12 blogi",
-  "author": "Matti",
+  "title": "422 test",
+  "author": "test",
   "url": "www.testog.com",
   "likes" : 2
 }

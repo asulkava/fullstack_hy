@@ -1,8 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
-const { isError } = require('lodash')
 
 
 blogsRouter.get('/', async (request, response) => {
@@ -14,11 +11,16 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!request.token || !decodedToken.id) {
+
+  // checks if middleware returns token and user
+  if(!request.token || !request.token.id) {
     return response.status(401).json({ error: 'token missing or invalid' })
   }
-  const user = await User.findById(decodedToken.id)
+  if (!request.user) {
+    return response.status(401).json({ error: 'user not found' })
+  }
+
+  const user = request.user
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -36,20 +38,23 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  // check token
-  if (!request.token || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
-
   // check if blog exists
   const blog = await Blog.findById(request.params.id)
 
   if (!blog) {
     return response.status(404).json({ error: 'blog with this id could not be found' })
   }
+  
+  // checks if middleware returns token and user
+  if(!request.token || !request.token.id) {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+  if (!request.user) {
+    return response.status(401).json({ error: 'user not found' })
+  }
+
   // check that the blog that is being deleted is the users own blog
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   if (blog.user.toString() !== user.id.toString()) {
     return response.status(401).json({ error: 'Wrong user' })
