@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -29,12 +30,15 @@ const App = () => {
     }
   }, [])
 
+  const blogFormRef = useRef()
+
   const addBlog = (blogObject) => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         let notificationMsg = `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
         setBlogs(blogs.concat(returnedBlog))
+        blogFormRef.current.toggleVisibility()
         setNotificationMessage(notificationMsg)
         setNotificationStyle('success')
         setTimeout(() => {
@@ -75,33 +79,35 @@ const App = () => {
   }
 
 
-    
+
   return (
-    <div> 
-      {user === null ? 
+    <div>
+      {user === null ?
         <div>
-        <h2>Log in to application</h2>
-        <Notification message={errorMessage} style={notificationStyle} />
-        <LoginForm 
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
-        />
-      </div>
-      :
+          <h2>Log in to application</h2>
+          <Notification message={errorMessage} style={notificationStyle} />
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+        </div>
+        :
         <div>
-        <h2>blogs</h2>
-        <Notification message={errorMessage} style={notificationStyle} />
-        <p>
-          {user.name} logged in
-          <button onClick={handleLogout}>logout</button>
-        </p>
-        <BlogForm createBlog={addBlog}/>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
+          <h2>blogs</h2>
+          <Notification message={errorMessage} style={notificationStyle} />
+          <p>
+            {user.name} logged in
+            <button onClick={handleLogout}>logout</button>
+          </p>
+          <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} />
+          )}
         </div>
       }
     </div>
