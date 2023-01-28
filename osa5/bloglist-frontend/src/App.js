@@ -18,7 +18,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
     )
   }, [])
 
@@ -73,11 +73,44 @@ const App = () => {
     }
   }
 
-  const handleLogout = async (event) => {
+  const handleLogout = async () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
 
+
+  const handleLike = async (blog) => {
+    const newBlog = {...blog, likes: blog.likes + 1}
+    await blogService.update(newBlog)
+    const updatedBlogs = blogs.map(currBlog => currBlog.id === blog.id ? newBlog : currBlog )
+    .sort((a, b) => b.likes - a.likes)
+    setBlogs(updatedBlogs)
+  }
+
+  const handleRemove = async (blog) => {
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+      try {
+        await blogService.remove(blog)
+        let notificationMsg = `Removed blog ${blog.title} by ${blog.author}`
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        setNotificationMessage(notificationMsg)
+        setNotificationStyle('success')
+        setTimeout(() => {
+          setNotificationMessage(null)
+          setNotificationStyle('success')
+        }, 5000)
+      } catch (error) {
+        setNotificationMessage(`Removing blog ${blog.title} by ${blog.author} failed`)
+        setNotificationStyle('error')
+        setTimeout(() => {
+          setNotificationMessage(null)
+          setNotificationStyle('success')
+        }, 5000)
+      }
+      
+    }
+
+  }
 
 
   return (
@@ -106,7 +139,7 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} updateLikes={handleLike} removeBlog={handleRemove} user={user} />
           )}
         </div>
       }
