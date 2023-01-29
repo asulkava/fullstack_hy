@@ -9,7 +9,7 @@ const Blog = ({ blog, updateLikes, removeBlog, user }) => {
   return (
     <div>
       {showDetails ?
-        <div className='blog'>
+        <div className='fullBlog'>
           <p>{blog.title} {blog.author}<button onClick={() => setShowDetails(false)}>hide</button></p>
           <p>{blog.url}</p>
           <p>likes {blog.likes} <button onClick={() => updateLikes(blog)}>like</button></p>
