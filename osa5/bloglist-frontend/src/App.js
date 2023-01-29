@@ -13,7 +13,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setNotificationMessage] = useState(null)
-  const [notificationStyle, setNotificationStyle] = useState("success")
+  const [notificationStyle, setNotificationStyle] = useState('success')
 
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const App = () => {
         setNotificationStyle('success')
       }, 5000)
     }
-    
+
   }
 
   const handleLogin = async (event) => {
@@ -93,10 +93,10 @@ const App = () => {
 
 
   const handleLike = async (blog) => {
-    const newBlog = {...blog, likes: blog.likes + 1}
+    const newBlog = { ...blog, likes: blog.likes + 1 }
     await blogService.update(newBlog)
     const updatedBlogs = blogs.map(currBlog => currBlog.id === blog.id ? newBlog : currBlog )
-    .sort((a, b) => b.likes - a.likes)
+      .sort((a, b) => b.likes - a.likes)
     setBlogs(updatedBlogs)
   }
 
@@ -120,7 +120,7 @@ const App = () => {
           setNotificationStyle('success')
         }, 5000)
       }
-      
+
     }
 
   }
