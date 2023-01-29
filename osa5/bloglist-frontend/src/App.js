@@ -27,25 +27,38 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
   const blogFormRef = useRef()
 
-  const addBlog = (blogObject) => {
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        let notificationMsg = `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
-        setBlogs(blogs.concat(returnedBlog))
-        blogFormRef.current.toggleVisibility()
-        setNotificationMessage(notificationMsg)
+
+  const addBlog = async (blogObject) => {
+    try {
+      const newBlog = await blogService.create(blogObject)
+      let notificationMsg = `a new blog ${newBlog.title} by ${newBlog.author} added`
+      setBlogs(blogs.concat(newBlog))
+      // reload blogs to get user links to load as well
+      const blogsReloaded = await blogService.getAll()
+      setBlogs(blogsReloaded.sort((a, b) => b.likes - a.likes))
+      blogFormRef.current.toggleVisibility()
+      setNotificationMessage(notificationMsg)
+      setNotificationStyle('success')
+      setTimeout(() => {
+        setNotificationMessage(null)
         setNotificationStyle('success')
-        setTimeout(() => {
-          setNotificationMessage(null)
-          setNotificationStyle('success')
-        }, 5000)
-      })
+      }, 5000)
+
+    } catch (error) {
+      setNotificationMessage('an error occured')
+      setNotificationStyle('error')
+      setTimeout(() => {
+        setNotificationMessage(null)
+        setNotificationStyle('success')
+      }, 5000)
+    }
+    
   }
 
   const handleLogin = async (event) => {
