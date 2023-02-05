@@ -10,9 +10,9 @@ const Blog = ({ blog, updateLikes, removeBlog, user }) => {
     <div>
       {showDetails ?
         <div className='fullBlog'>
-          <p>{blog.title} {blog.author}<button onClick={() => setShowDetails(false)}>hide</button></p>
+          <p>{blog.title} {blog.author}<button id='hideDetails' onClick={() => setShowDetails(false)}>hide</button></p>
           <p>{blog.url}</p>
-          <p>likes {blog.likes} <button onClick={() => updateLikes(blog)}>like</button></p>
+          <p>likes {blog.likes} <button id='like' onClick={() => updateLikes(blog)}>like</button></p>
           <p>{blog.user.name}</p>
           {blog.user.username === user.username && (
             <button onClick={() => removeBlog(blog)}>remove</button>
@@ -20,7 +20,7 @@ const Blog = ({ blog, updateLikes, removeBlog, user }) => {
         </div>
         :
         <div className='blog'>
-          {blog.title} {blog.author} <button onClick={() => setShowDetails(true)}>view</button>
+          {blog.title} {blog.author} <button id='showDetails' onClick={() => setShowDetails(true)}>view</button>
         </div>
       }
     </div>
